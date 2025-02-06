@@ -1,8 +1,5 @@
-# Use an official OpenJDK 17 image as a base
-FROM openjdk:17-jdk-slim AS builder
-
-# Install Maven
-RUN apt-get update && apt-get install -y maven
+# Use an official Maven image to build the project (with OpenJDK 17)
+FROM maven:3.8.6-openjdk-17 AS builder
 
 # Set the working directory inside the container
 WORKDIR /SPYD
