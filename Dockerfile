@@ -5,7 +5,8 @@ FROM maven:3.8-openjdk-17 AS builder
 WORKDIR /SPYD
  
 # Copy the pom.xml from the Spyd-main-Backend directory
-COPY Spyd-main-Backend/SPYD/pom.xml .
+COPY /Spyd-main-Backend/SPYD
+
 #install maven
 RUN yum -y install maven
  
@@ -16,7 +17,7 @@ RUN mvn dependency:go-offline
 COPY . .
  
 # Run the Maven build to package the application into a JAR
-RUN mvn clean package -DskipTests
+RUN mvn clean install -DskipTests
  
 # Debug step to verify the output JAR file exists
 RUN ls /SPYD/target
@@ -25,13 +26,12 @@ RUN ls /SPYD/target
 FROM openjdk:17-jdk-slim
  
 # Set the working directory inside the container
-WORKDIR /SPYD
- 
-# Copy the packaged JAR from the builder stage into the final image
-COPY --from=builder /SPYD/target/SPYD-0.0.1-SNAPSHOT.jar /SPYD/spyd-backend.jar
+WORKDIR /SPYD/target/
+RUN java -jar SPYD-0.0.1-SNAPSHOT.jar
+
  
 # Expose the port the app will run on (change if needed)
-EXPOSE 8080
+EXPOSE 80
  
 # Run the application
 ENTRYPOINT ["java", "-jar", "/SPYD/spyd-backend.jar"]
