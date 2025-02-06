@@ -5,7 +5,7 @@ FROM maven:3.8-openjdk-17 AS builder
 WORKDIR /SPYD
 
 # Copy the source code from Spyd-main-Backend into the container
-COPY Spyd-main-Backend/SPYD/src ./src
+COPY /SPYD/src ./src
 
 # Download Maven dependencies (this is a separate layer to leverage caching)
 RUN mvn dependency:go-offline
