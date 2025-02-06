@@ -1,5 +1,5 @@
 # Use an OpenJDK 17 image as the base
-FROM openjdk:17-slim AS builder
+FROM openjdk:17-jdk-slim
 
 # Install Maven in the container
 RUN apt-get update && apt-get install -y maven
