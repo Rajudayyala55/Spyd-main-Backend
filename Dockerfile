@@ -4,9 +4,6 @@ FROM maven:3.8-openjdk-17 AS builder
 # Set the working directory inside the container
 WORKDIR /SPYD
 
-# Copy the pom.xml from the Spyd-main-Backend directory into the container
-COPY Spyd-main-Backend/SPYD/pom.xml .
-
 # Copy the source code from Spyd-main-Backend into the container
 COPY Spyd-main-Backend/SPYD/src ./src
 
