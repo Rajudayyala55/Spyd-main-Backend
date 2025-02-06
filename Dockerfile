@@ -1,19 +1,19 @@
-# Use an official Maven image to build the project (with OpenJDK 17)
-FROM openjdk:17-slim AS builder
+# Use an official OpenJDK 17 image as a base
+FROM openjdk:17-jdk-slim AS builder
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven
 
 # Set the working directory inside the container
 WORKDIR /SPYD
 
-# Install Maven (since it's not in the OpenJDK image)
-RUN apt-get update && apt-get install -y maven
-
-# Copy the pom.xml from the Spyd-main-Backend directory
+# Copy the pom.xml from the Spyd-main-Backend/SPYD directory
 COPY Spyd-main-Backend/SPYD/pom.xml .
 
 # Download Maven dependencies (this is a separate layer to leverage caching)
 RUN mvn dependency:go-offline
 
-# Copy the entire source code from Spyd-main-Backend into the container
+# Copy the entire source code from Spyd-main-Backend/SPYD into the container
 COPY Spyd-main-Backend/SPYD/src ./src
 
 # Run the Maven build to package the application into a JAR
