@@ -13,7 +13,7 @@ RUN yum -y install maven
 RUN mvn dependency:go-offline
  
 # Copy the entire source code from Spyd-main-Backend into the container
-COPY Spyd-main-Backend/SPYD/src ./src
+COPY . .
  
 # Run the Maven build to package the application into a JAR
 RUN mvn clean package -DskipTests
