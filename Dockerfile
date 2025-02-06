@@ -1,8 +1,11 @@
 # Use an official Maven image to build the project (with OpenJDK 17)
-FROM maven:3.8.6-openjdk-17-slim AS builder
+FROM openjdk:17-jdk-slim AS builder
 
 # Set the working directory inside the container
 WORKDIR /SPYD
+
+# Install Maven (since it's not in the OpenJDK image)
+RUN apt-get update && apt-get install -y maven
 
 # Copy the pom.xml from the Spyd-main-Backend directory
 COPY Spyd-main-Backend/SPYD/pom.xml .
