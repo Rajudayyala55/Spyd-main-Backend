@@ -1,5 +1,5 @@
 # Use an official Maven image to build the project (with OpenJDK 17)
-FROM maven:3.8.6-openjdk-17 AS builder
+FROM maven:3.8.6-openjdk-17-slim AS builder
 
 # Set the working directory inside the container
 WORKDIR /SPYD
