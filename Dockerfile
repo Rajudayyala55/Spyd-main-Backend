@@ -1,22 +1,26 @@
-# Use a Maven base image to build the application
-FROM maven:3.8.1-jdk-11 AS builder
+# Use a base image with OpenJDK (no need to install Maven)
+FROM openjdk:11-jre-slim AS builder
 
 # Set the working directory to the folder containing the pom.xml
 WORKDIR /SPYD
 
-# Copy the pom.xml and source code into the container
-COPY ./SPYD/pom.xml ./SPYD/src /SPYD/
+# Copy the Maven wrapper and necessary files from the project
+COPY ./SPYD/mvnw ./SPYD/mvnw
+COPY ./SPYD/mvnw.cmd ./SPYD/mvnw.cmd
+COPY ./SPYD/.mvn ./SPYD/.mvn
+COPY ./SPYD/pom.xml ./SPYD/pom.xml
+COPY ./SPYD/src ./SPYD/src
 
-# Download dependencies (this command will now work as Maven can find pom.xml)
-RUN mvn dependency:go-offline
+# Make sure the Maven wrapper is executable
+RUN chmod +x mvnw
 
-# Build the JAR file
-RUN mvn package -DskipTests
+# Download dependencies and package the application
+RUN ./mvnw clean install -DskipTests
 
 # Start a new stage to reduce the final image size
 FROM openjdk:11-jre-slim
 
-# Copy the JAR file from the builder stage
+# Copy the JAR file from the build stage
 COPY --from=builder /SPYD/target/*.jar /usr/local/bin/backend.jar
 
 # Expose the application port
