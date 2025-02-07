@@ -1,32 +1,26 @@
-# Use an official Maven image to build the project (with OpenJDK 17)
-FROM maven:3.8-openjdk-17 AS builder
+# Use a Maven base image to build the application
+FROM maven:3.8.1-jdk-11 AS builder
 
-# Set the working directory inside the container
+# Set the working directory to the folder containing the pom.xml
 WORKDIR /SPYD
 
-# Copy the source code from Spyd-main-Backend into the container
-COPY /SPYD/src ./src
+# Copy the pom.xml and source code into the container
+COPY ./SPYD/pom.xml ./SPYD/src /SPYD/
 
-# Download Maven dependencies (this is a separate layer to leverage caching)
+# Download dependencies (this command will now work as Maven can find pom.xml)
 RUN mvn dependency:go-offline
 
-# Run the Maven build to package the application into a JAR
-RUN mvn clean install -DskipTests
+# Build the JAR file
+RUN mvn package -DskipTests
 
-# Debug step to verify the output JAR file exists
-RUN ls /SPYD/target
+# Start a new stage to reduce the final image size
+FROM openjdk:11-jre-slim
 
-# Use a slim OpenJDK image to run the application
-FROM openjdk:17-jdk-slim
+# Copy the JAR file from the builder stage
+COPY --from=builder /SPYD/target/*.jar /usr/local/bin/backend.jar
 
-# Set the working directory inside the container
-WORKDIR /SPYD
-
-# Copy the packaged JAR from the builder stage into the final image
-COPY --from=builder /SPYD/target/SPYD-0.0.1-SNAPSHOT.jar /SPYD/spyd-backend.jar
-
-# Expose the port the app will run on (change if needed)
+# Expose the application port
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "/SPYD/spyd-backend.jar"]
+CMD ["java", "-jar", "/usr/local/bin/backend.jar"]
