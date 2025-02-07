@@ -29,7 +29,7 @@ WORKDIR /SPYD
 COPY --from=builder /SPYD/target/SPYD-0.0.1-SNAPSHOT.jar /SPYD/spyd-backend.jar
 
 # Expose the port the app will run on (change if needed)
-EXPOSE 8080
+EXPOSE 80
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "/SPYD/spyd-backend.jar"]
