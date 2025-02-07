@@ -5,8 +5,8 @@ FROM maven:latest AS builder
 WORKDIR /SPYD
 
 # Copy the pom.xml and the source code into the container (adjusting path based on your file structure)
-COPY Spyd-main-Backend/SPYD/pom.xml .
-COPY Spyd-main-Backend/SPYD/src ./src
+COPY SPYD/pom.xml .
+COPY SPYD/src ./src
 
 # Run Maven to download dependencies and build the project (this will create the target directory)
 RUN mvn clean package -DskipTests
