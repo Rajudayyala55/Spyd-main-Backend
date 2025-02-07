@@ -7,7 +7,6 @@ WORKDIR /SPYD
 # Copy the Maven wrapper and necessary files from the project
 COPY ./SPYD/mvnw ./SPYD/mvnw
 COPY ./SPYD/mvnw.cmd ./SPYD/mvnw.cmd
-COPY ./SPYD/.mvn ./SPYD/.mvn
 COPY ./SPYD/pom.xml ./SPYD/pom.xml
 COPY ./SPYD/src ./SPYD/src
 
@@ -23,8 +22,8 @@ FROM openjdk:11-jre-slim
 # Copy the JAR file from the build stage
 COPY --from=builder /SPYD/target/*.jar /usr/local/bin/backend.jar
 
-# Expose the application port
-EXPOSE 8080
+# Expose port 80
+EXPOSE 80
 
-# Run the application
-CMD ["java", "-jar", "/usr/local/bin/backend.jar"]
+# Run the application on port 80
+CMD ["java", "-jar", "-Dserver.port=80", "/usr/local/bin/backend.jar"]
