@@ -23,7 +23,7 @@ WORKDIR /SPYD
 # Copy the JAR file from the builder stage into the final image
 COPY --from=builder /SPYD/target/SPYD-0.0.1-SNAPSHOT.jar /SPYD/spyd-backend.jar
 
-# Expose port 80 for the application
+# Expose port 808 for the application
 EXPOSE 80
 
 # Command to run the application
