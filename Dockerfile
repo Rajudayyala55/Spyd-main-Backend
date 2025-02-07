@@ -1,29 +1,35 @@
-# Use a base image with OpenJDK (no need to install Maven)
-FROM openjdk:11-jre-slim AS builder
+# Use the latest Maven image (which comes with OpenJDK as well)
+FROM maven:latest AS builder
 
-# Set the working directory to the folder containing the pom.xml
+# Set the working directory inside the container
 WORKDIR /SPYD
 
-# Copy the Maven wrapper and necessary files from the project
-COPY ./SPYD/mvnw ./SPYD/mvnw
-COPY ./SPYD/mvnw.cmd ./SPYD/mvnw.cmd
-COPY ./SPYD/pom.xml ./SPYD/pom.xml
-COPY ./SPYD/src ./SPYD/src
+# Copy the pom.xml from the Spyd-main-Backend directory
+COPY Spyd-main-Backend/SPYD/pom.xml .
 
-# Make sure the Maven wrapper is executable
-RUN chmod +x mvnw
+# Download Maven dependencies (this is a separate layer to leverage caching)
+RUN mvn dependency:go-offline
 
-# Download dependencies and package the application
-RUN ./mvnw clean install -DskipTests
+# Copy the entire source code from Spyd-main-Backend into the container
+COPY Spyd-main-Backend/SPYD/src ./src
 
-# Start a new stage to reduce the final image size
-FROM openjdk:11-jre-slim
+# Run the Maven build to package the application into a JAR
+RUN mvn clean package -DskipTests
 
-# Copy the JAR file from the build stage
-COPY --from=builder /SPYD/target/*.jar /usr/local/bin/backend.jar
+# Debug step to verify the output JAR file exists
+RUN ls /SPYD/target
 
-# Expose port 80
-EXPOSE 80
+# Use a slim openjdk image to run the application
+FROM openjdk:17-jdk-slim
 
-# Run the application on port 80
-CMD ["java", "-jar", "-Dserver.port=80", "/usr/local/bin/backend.jar"]
+# Set the working directory inside the container
+WORKDIR /SPYD
+
+# Copy the packaged JAR from the builder stage into the final image
+COPY --from=builder /SPYD/target/SPYD-0.0.1-SNAPSHOT.jar /SPYD/spyd-backend.jar
+
+# Expose the port the app will run on (change if needed)
+EXPOSE 8080
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "/SPYD/spyd-backend.jar"]
