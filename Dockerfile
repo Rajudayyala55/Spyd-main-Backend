@@ -4,7 +4,7 @@ FROM maven:latest AS builder
 # Set the working directory inside the container
 WORKDIR /SPYD
 
-# Copy the pom.xml and the source code into the container
+# Copy the pom.xml and the source code into the container (adjusting path based on your file structure)
 COPY Spyd-main-Backend/SPYD/pom.xml .
 COPY Spyd-main-Backend/SPYD/src ./src
 
@@ -24,7 +24,7 @@ WORKDIR /SPYD
 COPY --from=builder /SPYD/target/SPYD-0.0.1-SNAPSHOT.jar /SPYD/spyd-backend.jar
 
 # Expose port 8080 for the application
-EXPOSE 80
+EXPOSE 8080
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "/SPYD/spyd-backend.jar"]
