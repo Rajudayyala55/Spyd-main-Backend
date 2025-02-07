@@ -7,14 +7,14 @@ WORKDIR /SPYD
 # Copy the pom.xml from the Spyd-main-Backend/SPYD directory
 COPY . .
 
+# Debug step to verify the output JAR file exists
+RUN ls /SPYD/target
+
 # Download Maven dependencies (this is a separate layer to leverage caching)
 RUN mvn dependency:go-offline
 
 # Run the Maven build to package the application into a JAR
 RUN mvn clean package -DskipTests
-
-# Debug step to verify the output JAR file exists
-RUN ls /SPYD/target
 
 # Use a slim openjdk image to run the application
 FROM openjdk:17-jdk-slim
