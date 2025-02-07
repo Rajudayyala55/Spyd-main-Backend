@@ -24,7 +24,7 @@ WORKDIR /SPYD
 COPY --from=builder /SPYD/target/SPYD-0.0.1-SNAPSHOT.jar /SPYD/spyd-backend.jar
 
 # Expose port 8080 for the application
-EXPOSE 8080
+EXPOSE 80
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "/SPYD/spyd-backend.jar"]
