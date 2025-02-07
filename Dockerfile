@@ -5,13 +5,10 @@ FROM maven:latest AS builder
 WORKDIR /SPYD
 
 # Copy the pom.xml from the Spyd-main-Backend/SPYD directory
-COPY Spyd-main-Backend/SPYD/pom.xml .
+COPY . .
 
 # Download Maven dependencies (this is a separate layer to leverage caching)
 RUN mvn dependency:go-offline
-
-# Copy the entire source code from the Spyd-main-Backend/SPYD directory into the container
-COPY Spyd-main-Backend/SPYD/src ./src
 
 # Run the Maven build to package the application into a JAR
 RUN mvn clean package -DskipTests
